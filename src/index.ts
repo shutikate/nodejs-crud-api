@@ -2,6 +2,7 @@ import 'dotenv/config';
 import http from 'node:http';
 import { get } from './endpoints/get.ts';
 import { post } from './endpoints/post.ts';
+import { del } from './endpoints/delete.ts';
 
 const port = process.env.PORT;
 
@@ -12,6 +13,9 @@ const server = http.createServer((req, res) => {
     }
     if (req.method === 'POST') {
       post(req.url, req, res);
+    }
+    if (req.method === 'DELETE') {
+      del(req.url, req, res);
     }
   }
   else {
