@@ -15,6 +15,10 @@ export default [
       "@typescript-eslint": eslintPluginTypescript,
       prettier: eslintPluginPrettier,
     },
+    extends: [
+      "plugin:@typescript-eslint/recommended",
+      "prettier"
+    ],
     rules: {
       "prettier/prettier": "error",
       "comma-dangle": ["error", "only-multiline"],
