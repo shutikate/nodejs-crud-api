@@ -1,14 +1,7 @@
 import http from 'http';
 import { v4 } from 'uuid';
-import { addData, getUser, getAllUsers, isValidateUser } from '../data/data.ts';
+import { addData, isValidateUser } from '../data/data.ts';
 import { User } from '../data/types.ts';
-
-export const get = (url: string, req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage>) => {
-  if (url === '/api/users') {
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(getAllUsers()));
-  }
-}
 
 export const post = (url: string, req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage>) => {
   if (url === '/api/users') {

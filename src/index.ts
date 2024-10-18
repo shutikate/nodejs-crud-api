@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import http from 'node:http';
-import { get, post } from './endpoints/endpoints.ts';
+import { get } from './endpoints/get.ts';
+import { post } from './endpoints/post.ts';
 
 const port = process.env.PORT;
 
