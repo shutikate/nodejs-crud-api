@@ -10,9 +10,3 @@ export interface ServerUser {
   age: number;
   hobbies: string[] | [];
 };
-
-export interface UpdateUser {
-  username?: string;
-  age?: number;
-  hobbies?: string[] | [];
-};

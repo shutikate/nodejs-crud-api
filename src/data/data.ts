@@ -1,4 +1,4 @@
-import { User, ServerUser, UpdateUser } from './types';
+import { User, ServerUser } from './types';
 
 export const data:Map<string, ServerUser> = new Map();
 
@@ -14,7 +14,7 @@ export const getAllUsers = () => {
   return Array.from(data.values());
 };
 
-export const updateUser = (id: string, user: ServerUser, updateUser: UpdateUser) => {
+export const updateUser = (id: string, user: ServerUser, updateUser: User) => {
   data.set(id, { ...user, ...updateUser });
 };
 
@@ -23,8 +23,9 @@ export const deleteUser = (id: string) => {
 };
 
 export const isValidateFields = (user: User) => {
+  const userFields = Object.keys(user);
   const fields = ['username', 'age', 'hobbies'];
-  return fields.every(field => user.hasOwnProperty(field));
+  return userFields.length === fields.length && fields.every(field => user.hasOwnProperty(field));
 }
 
 export const isValidateTypes = (user: User) => {

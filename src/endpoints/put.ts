@@ -1,6 +1,6 @@
 import http from 'http';
-import { getUser, updateUser } from '../data/data';
-import { UpdateUser } from '../data/types';
+import { getUser, updateUser, isValidateFields, isValidateTypes } from '../data/data';
+import { User } from '../data/types';
 
 export const put = (url: string, req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage>) => {
 
@@ -20,7 +20,15 @@ export const put = (url: string, req: http.IncomingMessage, res: http.ServerResp
 
     if (matchId) {
       try {
-        const updateInfo: UpdateUser = JSON.parse(body);
+        const updateInfo: User = JSON.parse(body);
+
+        if (!isValidateFields(updateInfo) || !isValidateTypes(updateInfo)) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({
+            message: 'Request does not contain required fields or an invalid type is specified' }));
+          return;
+        }
+
         const userId = matchId[1];
         const user = getUser(userId);
 
@@ -34,7 +42,7 @@ export const put = (url: string, req: http.IncomingMessage, res: http.ServerResp
         }
 
       } catch (error) {
-        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ message: 'Invalid JSON format' }));
       }
 
