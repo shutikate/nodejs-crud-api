@@ -21,7 +21,7 @@ export const del = (url: string, req: http.IncomingMessage, res: http.ServerResp
     }
 
     else {
-      res.writeHead(404, { 'Content-Type': 'application/json' });
+      res.writeHead(400, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ message: 'Format of provided id is invalid (not uuid)' }));
     }
 };

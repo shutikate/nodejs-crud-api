@@ -1,4 +1,4 @@
-import { User, ServerUser } from "./types.ts";
+import { User, ServerUser, UpdateUser } from "./types.ts";
 
 export const data:Map<string, ServerUser> = new Map();
 
@@ -13,6 +13,10 @@ export const getUser = (id: string) => {
 export const getAllUsers = () => {
   return Array.from(data.values());
 };
+
+export const updateUser = (id:string, user: ServerUser, updateUser: UpdateUser) => {
+  data.set(id, { ...user, ...updateUser});
+}
 
 export const deleteUser = (id: string) => {
   return data.delete(id);
