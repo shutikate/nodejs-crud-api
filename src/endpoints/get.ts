@@ -1,5 +1,5 @@
 import http from 'http';
-import { getUser, getAllUsers } from '../data/data.ts';
+import { getUser, getAllUsers } from '../data/data';
 
 export const get = (url: string, req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage>) => {
 

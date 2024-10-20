@@ -1,7 +1,7 @@
 import http from 'http';
 import { v4 } from 'uuid';
-import { addData, isValidateUser } from '../data/data.ts';
-import { User } from '../data/types.ts';
+import { addData, isValidateTypes, isValidateFields } from '../data/data';
+import { User } from '../data/types';
 
 export const post = (url: string, req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage>) => {
   if (url === '/api/users') {
@@ -14,26 +14,30 @@ export const post = (url: string, req: http.IncomingMessage, res: http.ServerRes
     req.on('end', () => {
 
       if (body) {
-        const user: User = JSON.parse(body);
+        try {
+          const user: User = JSON.parse(body);
 
-        if (isValidateUser(user)) {
-          const id = v4();
-          res.writeHead(201, { 'Content-Type': 'application/json' });
-          addData(id, user);
-          res.end(JSON.stringify({ id, ...user }));
-        }
-        else {
+          if (isValidateFields(user) && isValidateTypes(user)) {
+            const id = v4();
+            res.writeHead(201, { 'Content-Type': 'application/json' });
+            addData(id, user);
+            res.end(JSON.stringify({ id, ...user }));
+          } else {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'Request does not contain required fields'}));
+          }
+        } catch (error) {
           res.writeHead(400, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ message: 'Request does not contain required fields'}));
+          res.end(JSON.stringify({ message: 'Invalid JSON format'}));
         }
       }
-
       else {
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ message: 'Request with empty body'}));
       }
     });
   }
+
   else {
     res.writeHead(404, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ message: 'Request with invalid url'}));

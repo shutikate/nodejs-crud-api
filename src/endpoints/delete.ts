@@ -1,5 +1,5 @@
 import http from 'http';
-import { getUser, deleteUser } from '../data/data.ts';
+import { getUser, deleteUser } from '../data/data';
 
 export const del = (url: string, req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage>) => {
 

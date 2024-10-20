@@ -1,6 +1,6 @@
 import http from 'http';
-import { getUser, updateUser } from '../data/data.ts';
-import { UpdateUser } from '../data/types.ts';
+import { getUser, updateUser } from '../data/data';
+import { UpdateUser } from '../data/types';
 
 export const put = (url: string, req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage>) => {
 
@@ -19,17 +19,23 @@ export const put = (url: string, req: http.IncomingMessage, res: http.ServerResp
     };
 
     if (matchId) {
-      const updateInfo: UpdateUser = JSON.parse(body);
-      const userId = matchId[1];
-      const user = getUser(userId);
+      try {
+        const updateInfo: UpdateUser = JSON.parse(body);
+        const userId = matchId[1];
+        const user = getUser(userId);
 
-      if (user) {
-        updateUser(userId, user, updateInfo);
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ ...user, ...updateInfo }));
-      } else {
-        res.writeHead(404, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ message: 'User with provided id does not exist' }));
+        if (user) {
+          updateUser(userId, user, updateInfo);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ ...user, ...updateInfo }));
+        } else {
+          res.writeHead(404, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ message: 'User with provided id does not exist' }));
+        }
+
+      } catch (error) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ message: 'Invalid JSON format' }));
       }
 
     }

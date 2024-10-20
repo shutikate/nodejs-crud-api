@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "description": "Implement simple CRUD API",
   "main": "index.ts",
-  "type": "module",
   "scripts": {
-    "start:prod": "webpack --mode=production",
+    "start:prod": "webpack && node dist/bundle.js",
     "start:dev": "nodemon src/index.ts"
   },
   "author": "Katsiaryna Shutsikava",
