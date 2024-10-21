@@ -1,10 +1,13 @@
 import http from 'http';
-import { getUser, updateUser, isValidateFields, isValidateTypes } from '../data/data';
+import { getUser, updateUser } from '../data/data';
+import { isValidateFields, isValidateTypes } from '../utils/validateUser';
+import { findMatchId } from '../utils/matchId';
 import { User } from '../data/types';
+import { Errors } from '../enum';
 
 export const put = (url: string, req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage>) => {
 
-  const matchId = url.match(/^\/api\/users\/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})$/);
+  const matchId = findMatchId(url);
   let body = '';
 
   req.on('data', (chunk) => {
@@ -14,7 +17,7 @@ export const put = (url: string, req: http.IncomingMessage, res: http.ServerResp
   req.on('end', () => {
     if (!body) {
       res.writeHead(400, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ message: 'Request with empty body' }));
+      res.end(JSON.stringify({ message: Errors.EmptyBody }));
       return;
     };
 
@@ -24,8 +27,7 @@ export const put = (url: string, req: http.IncomingMessage, res: http.ServerResp
 
         if (!isValidateFields(updateInfo) || !isValidateTypes(updateInfo)) {
           res.writeHead(400, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({
-            message: 'Request does not contain required fields or an invalid type is specified' }));
+          res.end(JSON.stringify({message: Errors.InvalidRequest }));
           return;
         }
 
@@ -38,19 +40,19 @@ export const put = (url: string, req: http.IncomingMessage, res: http.ServerResp
           res.end(JSON.stringify({ ...user, ...updateInfo }));
         } else {
           res.writeHead(404, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ message: 'User with provided id does not exist' }));
+          res.end(JSON.stringify({ message: Errors.UserNotFound }));
         }
 
       } catch (error) {
         res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ message: 'Invalid JSON format' }));
+        res.end(JSON.stringify({ message: Errors.InvalidJSON }));
       }
 
     }
 
     else {
       res.writeHead(400, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ message: 'Format of provided id is invalid (not uuid)' }));
+      res.end(JSON.stringify({ message: Errors.InvalidId }));
     };
   });
 };

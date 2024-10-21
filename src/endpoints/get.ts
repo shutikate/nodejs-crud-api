@@ -1,9 +1,11 @@
 import http from 'http';
+import { findMatchId } from '../utils/matchId';
 import { getUser, getAllUsers } from '../data/data';
+import { Errors } from '../enum';
 
 export const get = (url: string, req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage>) => {
 
-  const matchId = url.match(/^\/api\/users\/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})$/);
+  const matchId = findMatchId(url);
 
   if (matchId) {
     const userId = matchId[1];
@@ -14,7 +16,7 @@ export const get = (url: string, req: http.IncomingMessage, res: http.ServerResp
       res.end(JSON.stringify(user));
     } else {
       res.writeHead(404, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ message: 'User with provided id does not exist' }));
+      res.end(JSON.stringify({ message: Errors.UserNotFound }));
     }
 
   }
@@ -27,6 +29,6 @@ export const get = (url: string, req: http.IncomingMessage, res: http.ServerResp
 
   else {
     res.writeHead(404, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ message: 'Format of provided id is invalid (not uuid)' }));
+    res.end(JSON.stringify({ message: Errors.InvalidId }));
   }
 }

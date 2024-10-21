@@ -1,7 +1,9 @@
 import http from 'http';
 import { v4 } from 'uuid';
-import { addData, isValidateTypes, isValidateFields } from '../data/data';
+import { addData } from '../data/data';
+import { isValidateFields, isValidateTypes } from '../utils/validateUser';
 import { User } from '../data/types';
+import { Errors } from '../enum';
 
 export const post = (url: string, req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage>) => {
   if (url === '/api/users') {
@@ -13,33 +15,34 @@ export const post = (url: string, req: http.IncomingMessage, res: http.ServerRes
 
     req.on('end', () => {
 
-      if (body) {
-        try {
-          const user: User = JSON.parse(body);
-
-          if (isValidateFields(user) && isValidateTypes(user)) {
-            const id = v4();
-            res.writeHead(201, { 'Content-Type': 'application/json' });
-            addData(id, user);
-            res.end(JSON.stringify({ id, ...user }));
-          } else {
-            res.writeHead(400, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ message: 'Request does not contain required fields or an invalid type is specified'}));
-          }
-        } catch (error) {
-          res.writeHead(500, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ message: 'Invalid JSON format'}));
-        }
-      }
-      else {
+      if (!body) {
         res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ message: 'Request with empty body'}));
+        res.end(JSON.stringify({ message: Errors.EmptyBody }));
+        return;
+      }
+
+      try {
+        const user: User = JSON.parse(body);
+
+        if (isValidateFields(user) && isValidateTypes(user)) {
+          const id = v4();
+          res.writeHead(201, { 'Content-Type': 'application/json' });
+          addData(id, user);
+          res.end(JSON.stringify({ id, ...user }));
+        } else {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ message: Errors.InvalidRequest }));
+        }
+
+      } catch (error) {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ message: Errors.InvalidJSON }));
       }
     });
   }
 
   else {
     res.writeHead(404, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ message: 'Request with invalid url'}));
+    res.end(JSON.stringify({ message: Errors.InvalidUrl}));
   }
 }
